@@ -36,35 +36,69 @@ O **Agenda Teens & Pregações AI** é um ecossistema full-stack desenvolvido pa
 
 ---
 
-## ⚡ Como Iniciar o Sistema (1 Clique no Windows)
+## ⚡ Como Iniciar o Sistema (Windows & Linux/macOS)
 
-Para que qualquer membro da equipe ou avaliador execute o sistema completo com **zero complicações**:
+Para que qualquer membro da equipe ou avaliador execute o sistema completo com **zero complicações**, seja no Windows ou no Linux:
 
-### Opção 1: Executável Automático (Mais Fácil) 🌟
-1. Vá até a raiz do projeto e dê um **duplo clique** em **[`iniciar_sistema.bat`](iniciar_sistema.bat)**.
-   - O script libera automaticamente as portas `8000` e `3000` de processos antigos.
-   - Sobe o **Backend FastAPI** conectado ao banco de dados Supabase PostgreSQL.
-   - Sobe o **Frontend Next.js** de produção.
-   - Abre o navegador automaticamente em **`http://localhost:3000`**.
-2. Para encerrar o sistema ao final da apresentação, basta dar um duplo clique em **[`parar_sistema.bat`](parar_sistema.bat)**.
+### A) No Windows 🪟
 
-### Opção 2: Via Script PowerShell
-Abra o PowerShell na pasta do projeto e execute:
+#### Opção 1: Executável Automático (Mais Fácil) 🌟
+1. Dê um **duplo clique** em **[`iniciar_sistema.bat`](iniciar_sistema.bat)**.
+   - O script valida os `.env`, libera as portas `8000` e `3000`, sobe o Backend e o Frontend e abre o navegador automaticamente em `http://localhost:3000`.
+2. Para encerrar, dê um duplo clique em **[`parar_sistema.bat`](parar_sistema.bat)**.
+
+#### Opção 2: Terminal Manual no Windows
 ```powershell
-.\start_dev.ps1
-```
-
-### Opção 3: Execução Manual via Terminal
-Se preferir rodar cada serviço em um terminal separado:
-```powershell
-# Terminal 1 - Backend FastAPI (Porta 8000)
+# Terminal 1 - Backend FastAPI
 cd backend
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir . --host 127.0.0.1 --port 8000 --reload
 
-# Terminal 2 - Frontend Next.js (Porta 3000)
+# Terminal 2 - Frontend Next.js
 cd frontend
 npm start
 ```
+
+---
+
+### B) No Linux & macOS 🐧 🍎
+
+#### Opção 1: Executável Automático via Script Bash 🌟
+Na raiz do projeto, execute:
+```bash
+chmod +x iniciar_sistema.sh parar_sistema.sh
+./iniciar_sistema.sh
+```
+> O script cria os ambientes `.venv` e instala dependências automaticamente caso ainda não existam, libera as portas e inicia os servidores! Para parar tudo: `./parar_sistema.sh`.
+
+#### Opção 2: Passo a Passo Manual no Terminal Linux
+
+**Terminal 1 — Backend FastAPI (Porta 8000):**
+```bash
+cd backend
+# 1. Cria e ativa o ambiente virtual Linux (NÃO usa .exe nem Scripts\)
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 2. Instala dependências
+pip install -r requirements.txt
+
+# 3. Inicia a API
+uvicorn app.main:app --app-dir . --host 127.0.0.1 --port 8000 --reload
+```
+
+**Terminal 2 — Frontend Next.js (Porta 3000):**
+```bash
+cd frontend
+# 1. Instala as dependências Node (ESSENCIAL para não dar "not found")
+npm install
+
+# 2. Inicia o frontend em modo desenvolvimento
+npm run dev
+```
+
+> ⚠️ **Atenção para Usuários Linux**:
+> - **Erro `.exe: comando não encontrado`**: No Linux, o executável do Python não tem extensão `.exe` e fica na pasta `.venv/bin/python`, nunca em `Scripts\python.exe`.
+> - **Erro `: not found` no `npm start`**: Ocorre quando o comando `npm install` não foi rodado antes na pasta `frontend`, ou porque não houve `npm run build` prévio. No Linux, use preferencialmente `npm run dev`.
 
 ---
 

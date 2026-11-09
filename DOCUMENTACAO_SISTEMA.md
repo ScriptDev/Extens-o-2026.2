@@ -341,6 +341,22 @@ npm run dev
 ```
 > A aplicação estará disponível em `http://localhost:3000` e a agenda de eventos em `http://localhost:3000/events`.
 
+#### **Equivalente para Ambientes Linux / macOS 🐧**
+```bash
+# Executável unificado:
+chmod +x iniciar_sistema.sh parar_sistema.sh
+./iniciar_sistema.sh
+
+# Ou manualmente:
+# Terminal 1 - Backend:
+cd backend && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --app-dir . --host 127.0.0.1 --port 8000 --reload
+
+# Terminal 2 - Frontend:
+cd frontend && npm install && npm run dev
+```
+
 ---
 
 ### 8.4. Comandos Utilitários de Banco de Dados & Build
