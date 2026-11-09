@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demonstração de Integração - Agente de IA para Pregações</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #030712;
+      color: #f3f4f6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+    .header p {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+    .code-box {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 30px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Exemplo de Integração em Qualquer Site</h1>
+      <p>Este arquivo demonstra como o Widget Embeddável do Agente de IA funciona dentro de um site existente (WordPress, Webflow, Wix ou HTML puro).</p>
+    </div>
+
+    <div class="code-box">
+      &lt;!-- Apenas adicione estas duas linhas em qualquer página do seu site --&gt;<br>
+      &lt;div id="sermon-ai-widget"&gt;&lt;/div&gt;<br>
+      &lt;script src="http://localhost:3000/widget.js" data-api-url="http://localhost:8000"&gt;&lt;/script&gt;
+    </div>
+
+    <!-- PONTO DE INSERÇÃO DO WIDGET -->
+    <div id="sermon-ai-widget"></div>
+  </div>
+
+  <!-- INCLUSÃO DO SCRIPT DO WIDGET -->
+  <script src="/widget.js" data-api-url="http://localhost:8000" data-container="sermon-ai-widget"></script>
+
+</body>
+</html>
+

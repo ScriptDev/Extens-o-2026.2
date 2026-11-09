@@ -1,0 +1,41 @@
+// Prisma Schema - Agenda Inteligente de Cultos & Agente de IA para Pregações
+// Suporte nativo a PostgreSQL (Supabase)
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+}
+
+model Event {
+  id          String         @id @default(uuid()) @db.Uuid
+  title       String         @db.VarChar(255) // Ex: "Culto de Jovens - Sábado"
+  date        DateTime       @db.Timestamptz(6)
+  location    String         @db.VarChar(255)
+  theme       String?        @db.VarChar(255)
+  cover_image String?        @db.VarChar(1024)
+  
+  // Relacionamento: Um evento pode ter um esboço de pregação gerado pela IA
+  sermon      SermonOutline?
+  created_at  DateTime       @default(now()) @db.Timestamptz(6)
+
+  @@map("events")
+}
+
+model SermonOutline {
+  id                 String   @id @default(uuid()) @db.Uuid
+  event_id           String?  @unique @db.Uuid
+  event              Event?   @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  title              String   @db.VarChar(255)
+  preacher           String?  @db.VarChar(255)
+  audio_filename     String   @db.VarChar(512)
+  media_type         String   @default("audio") @db.VarChar(50)
+  structured_content Json
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("sermon_outlines")
+}
