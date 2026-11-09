@@ -11,16 +11,17 @@
 
 1. [Visão Geral do Produto](#-visão-geral-do-produto)
 2. [Como Iniciar o Sistema (1 Clique no Windows)](#-como-iniciar-o-sistema-1-clique-no-windows)
-3. [Tabela Oficial de Usuários & Credenciais do MVP](#-tabela-oficial-de-usuários--credenciais-do-mvp)
-4. [Roteiro Passo a Passo de Apresentação (Demo Script para a Equipe)](#-roteiro-passo-a-passo-de-apresentação-demo-script-para-a-equipe)
+3. [Guia de Configuração dos Arquivos .env (Para Teste Independente)](#-guia-de-configuração-dos-arquivos-env-para-teste-independente)
+4. [Tabela Oficial de Usuários & Credenciais do MVP](#-tabela-oficial-de-usuários--credenciais-do-mvp)
+5. [Roteiro Passo a Passo de Apresentação (Demo Script para a Equipe)](#-roteiro-passo-a-passo-de-apresentação-demo-script-para-a-equipe)
    - [Etapa 1: Acesso, Isolamento de Contas & Login Real](#etapa-1-acesso-isolamento-de-contas--login-real)
    - [Etapa 2: O Super Admin e a Simulação via Modo Ghost](#etapa-2-o-super-admin-e-a-simulação-via-modo-ghost)
    - [Etapa 3: Governança Pastoral & Ministérios com Brasões Kanji](#etapa-3-governança-pastoral--ministérios-com-brasões-kanji)
    - [Etapa 4: O Líder Ministerial & Criação de Eventos Assistida por IA](#etapa-4-o-líder-ministerial--criação-de-eventos-assistida-por-ia)
    - [Etapa 5: A Experiência do Adolescente (Devocional, Recados & RSVP)](#etapa-5-a-experiência-do-adolescente-devocional-recados--rsvp)
    - [Etapa 6: Inteligência Teológica & IA Multimodal com Google Gemini](#etapa-6-inteligência-teológica--ia-multimodal-com-google-gemini)
-5. [Tecnologias Utilizadas & Clean Architecture](#-tecnologias-utilizadas--clean-architecture)
-6. [Comandos de Manutenção & Banco de Dados](#-comandos-de-manutenção--banco-de-dados)
+6. [Tecnologias Utilizadas & Clean Architecture](#-tecnologias-utilizadas--clean-architecture)
+7. [Comandos de Manutenção & Banco de Dados](#-comandos-de-manutenção--banco-de-dados)
 
 ---
 
@@ -64,6 +65,115 @@ cd backend
 cd frontend
 npm start
 ```
+
+---
+
+## ⚙️ Guia de Configuração dos Arquivos .env (Para Teste Independente)
+
+> 🛡️ **Regra de Ouro DevSecOps**: Arquivos `.env` e `.env.local` contêm chaves de acesso e segredos operacionais e **estão estritamente ignorados pelo `.gitignore`**. NUNCA os versione no Git.
+
+Quando um membro da equipe clona o repositório para testar em seu próprio computador, o sistema disponibiliza templates pré-configurados prontos para uso:
+
+```
+raiz/
+├── backend/
+│   ├── .env.example          <- Template oficial com instruções detalhadas
+│   └── .env                  <- Seu arquivo de trabalho (criado por você ou pelo script)
+└── frontend/
+    ├── .env.local.example    <- Template oficial do Next.js
+    └── .env.local            <- Seu arquivo de trabalho (criado por você ou pelo script)
+```
+
+> 💡 **Automação**: Ao executar `iniciar_sistema.bat` ou `.\start_dev.ps1`, os arquivos `.env` e `.env.local` são criados automaticamente a partir dos `.example` caso você ainda não os tenha criado!
+
+---
+
+### 1. Configurações do Backend (`backend/.env`)
+
+Abra o arquivo `backend/.env` e ajuste as variáveis de acordo com o seu cenário de teste:
+
+```env
+# Conexão com o Banco de Dados (PostgreSQL / Supabase)
+DATABASE_URL="postgresql://postgres:[SENHA]@db.[REF].supabase.co:5432/postgres?sslmode=require"
+
+# Google Gemini API (Transcrições, Resumos, Copiloto IA e Brasões)
+GEMINI_API_KEY="AIzaSy_SUA_CHAVE_GEMINI_AQUI"
+
+# Modelo de IA
+GEMINI_MODEL="gemini-2.5-flash"
+
+# Configurações do Servidor
+APP_ENV="development"
+PORT=8000
+HOST="0.0.0.0"
+CORS_ORIGINS="http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000"
+MAX_AUDIO_SIZE_MB=150
+```
+
+#### Regras e Ajustes por Variável:
+
+| Variável | Obrigatória? | O que configurar / Onde obter |
+| :--- | :---: | :--- |
+| `DATABASE_URL` | **SIM** | **Cenário A (Banco da Equipe)**: Cole a string do Supabase compartilhada pelo time.<br>**Cenário B (Seu Próprio Banco)**: Crie um projeto gratuito no [Supabase](https://supabase.com) (ou use PostgreSQL local). Obtenha em: *Project Settings -> Database -> Connection string (URI)*. Use a porta `6543` (Pooler IPv4) caso sua operadora de internet não tenha IPv6 nativo. |
+| `GEMINI_API_KEY` | Recomendada | Obtenha gratuitamente em [Google AI Studio](https://aistudio.google.com/app/apikey).<br>*Nota*: Se deixar vazia, todo o sistema de gestão, membros, RSVP e eventos funciona normalmente; apenas os módulos de IA emitirão alerta de chave não configurada. |
+| `GEMINI_MODEL` | Opcional | `gemini-2.5-flash` (padrão, resposta rápida) ou `gemini-1.5-pro` (análise aprofundada). |
+| `CORS_ORIGINS` | Opcional | `http://localhost:3000,http://127.0.0.1:3000` (ou `*` para liberar todas as origens locais). |
+| `MAX_AUDIO_SIZE_MB` | Opcional | Limite de upload de áudios de pregações em MB (padrão: `150`). |
+
+---
+
+### 2. Configurações do Frontend (`frontend/.env.local`)
+
+Abra o arquivo `frontend/.env.local`:
+
+```env
+# URL da API FastAPI (Backend)
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+#### Regras e Ajustes:
+- **Teste no próprio computador (padrão)**: Mantenha `http://localhost:8000`.
+- **Teste PWA em Smartphone na mesma rede Wi-Fi**: Substitua `localhost` pelo IP local da sua máquina (descubra com `ipconfig` no prompt).  
+  *Exemplo:* `NEXT_PUBLIC_API_URL=http://192.168.1.25:8000`. Assim, o app PWA no celular se comunicará com o backend do seu computador sem erros de CORS ou rede.
+
+---
+
+### 3. Inicialização Rápida de Banco Novo em 1 Passo (Setup Completo)
+
+Se você estiver testando com um banco de dados novo, limpo ou seu próprio Supabase independente, execute o script unificado abaixo:
+
+```powershell
+.\backend\.venv\Scripts\python.exe backend/scripts/setup_complete_database.py
+```
+
+Esse script realiza de forma 100% automatizada e idempotente:
+1. Criação de todas as 7 tabelas e extensões nativas (`users`, `ministries`, `church_settings`, `events`, `sermon_outlines`, `event_attendances`, `notifications`).
+2. Criação de índices otimizados para alta concorrência.
+3. Carga dos 6 ministérios oficiais com **brasões SVG vetoriais e ideogramas japoneses (Kanji)**.
+4. Carga dos 7 usuários oficiais do MVP com senhas criptografadas (`senha123` via SHA-256 + Salt).
+5. Configurações litúrgicas padrão e eventos demonstrativos no calendário.
+
+---
+
+### 4. Instalação Inicial das Dependências (Clone do Zero)
+
+Caso você tenha acabado de clonar o repositório em uma máquina nova:
+
+```powershell
+# 1. Configurar dependências do Backend (Python 3.12)
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+
+# 2. Configurar dependências do Frontend (Node.js 18+)
+cd ../frontend
+npm install
+npm run build
+cd ..
+```
+
+Após esse processo único, basta utilizar o [`iniciar_sistema.bat`](iniciar_sistema.bat) para rodar o sistema no dia a dia.
 
 ---
 

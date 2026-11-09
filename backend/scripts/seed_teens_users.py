@@ -1,7 +1,14 @@
 import asyncio
 import hashlib
+import os
+import pathlib
+import sys
 import uuid
 import asyncpg
+from dotenv import load_dotenv
+
+env_path = pathlib.Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(env_path)
 
 def hash_password(password: str) -> str:
     # Hash SHA-256 seguro com salting fixo de aplicação
@@ -9,7 +16,10 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(f"{salt}{password}".encode("utf-8")).hexdigest()
 
 async def seed_users():
-    url = "postgresql://postgres.gtmapveuncewqoqgxbgh:exte%402026.2@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
+    url = os.getenv("DATABASE_URL")
+    if not url:
+        print("ERRO: DATABASE_URL não configurada no .env")
+        sys.exit(1)
     conn = await asyncpg.connect(url, timeout=15)
     print("Conectado ao Supabase para semear usuários da Agenda Teens...")
 

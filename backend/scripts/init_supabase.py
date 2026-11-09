@@ -3,9 +3,17 @@ import os
 import pathlib
 import sys
 import asyncpg
+from dotenv import load_dotenv
+
+# Carrega .env do backend ou da raiz
+env_path = pathlib.Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(env_path)
 
 async def init_db():
-    url = "postgresql://postgres.gtmapveuncewqoqgxbgh:exte%402026.2@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
+    url = os.getenv("DATABASE_URL")
+    if not url:
+        print("ERRO: DATABASE_URL não definida no .env")
+        sys.exit(1)
     sql_path = pathlib.Path(__file__).resolve().parent.parent / "prisma" / "migrations" / "01_init.sql"
     sql_content = sql_path.read_text(encoding="utf-8")
 

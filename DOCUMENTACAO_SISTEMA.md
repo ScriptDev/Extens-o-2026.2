@@ -377,5 +377,31 @@ Todos os 7 usuários abaixo estão gravados na tabela `public.users` do Supabase
 
 ---
 
+### 8.6. Guia de Configuração de Ambiente (.env) para Testes Independentes
+
+Para membros da equipe que desejam rodar e homologar o sistema em suas próprias máquinas ou bancos de dados isolados:
+
+1. **Protocolo de Não-Versão (.gitignore)**:
+   - Os arquivos de produção `.env` (backend) e `.env.local` (frontend) são ignorados pelo Git para evitar vazamento de credenciais na nuvem.
+   - Use sempre como base os gabaritos oficiais: `backend/.env.example` e `frontend/.env.local.example`.
+
+2. **Backend (`backend/.env`)**:
+   - `DATABASE_URL`: URI de conexão com PostgreSQL. Suporta Supabase IPv4 Pooler (porta 6543) ou conexão direta (porta 5432) com `sslmode=require`, bem como instâncias locais via Docker (`postgresql://postgres:postgres@localhost:5432/postgres`).
+   - `GEMINI_API_KEY`: Chave da API Google Gemini gerada gratuitamente no [Google AI Studio](https://aistudio.google.com/app/apikey).
+   - `GEMINI_MODEL`: Modelo padrão `gemini-2.5-flash` para baixa latência ou `gemini-1.5-pro` para análises homiléticas de longo contexto.
+   - `CORS_ORIGINS`: Lista de origens web autorizadas separadas por vírgula (`http://localhost:3000,http://127.0.0.1:3000` ou `*`).
+
+3. **Frontend (`frontend/.env.local`)**:
+   - `NEXT_PUBLIC_API_URL`: URL base da API FastAPI (`http://localhost:8000`). Para testes de PWA em smartphones na mesma rede Wi-Fi, substitua `localhost` pelo IP local da máquina (`http://192.168.x.x:8000`).
+
+4. **Script de Inicialização de Banco Independente em 1 Passo**:
+   - Para criar e semear um banco de dados novo do zero sem necessidade de rodar migrations manuais:
+   ```powershell
+   .\backend\.venv\Scripts\python.exe backend/scripts/setup_complete_database.py
+   ```
+   - Este utilitário cria todas as tabelas com integridade relacional, índices, os 6 ministérios oficiais com brasões em Kanji e cadastra os 7 usuários do MVP com a senha padrão `senha123`.
+
+---
+
 Ass: Samuel Mendes Cardoso - Software Factory Labs
 

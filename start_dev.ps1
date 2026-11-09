@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # Script de Inicialização Rápida - Agenda Teens & Pregações AI
 # Inicia o Backend FastAPI e o Frontend Next.js com liberação de portas
 # ==============================================================================
@@ -9,8 +9,26 @@ Write-Host "=================================================================" -
 
 $rootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
+# 0. Verificação de Arquivos de Ambiente (.env)
+Write-Host "`n[1/4] Verificando arquivos de ambiente (.env)..." -ForegroundColor Yellow
+$backendEnv = Join-Path $rootDir "backend\.env"
+$backendEnvExample = Join-Path $rootDir "backend\.env.example"
+if (-not (Test-Path $backendEnv)) {
+    Write-Host "   [!] 'backend\.env' não encontrado. Criando a partir de '.env.example'..." -ForegroundColor Cyan
+    Copy-Item $backendEnvExample $backendEnv
+    Write-Host "   [ATENÇÃO] Configure DATABASE_URL e GEMINI_API_KEY no arquivo 'backend\.env'!" -ForegroundColor Magenta
+}
+
+$frontendEnv = Join-Path $rootDir "frontend\.env.local"
+$frontendEnvExample = Join-Path $rootDir "frontend\.env.local.example"
+if (-not (Test-Path $frontendEnv)) {
+    Write-Host "   [!] 'frontend\.env.local' não encontrado. Criando a partir de '.env.local.example'..." -ForegroundColor Cyan
+    Copy-Item $frontendEnvExample $frontendEnv
+}
+Write-Host "   ✓ Arquivos de ambiente validados!" -ForegroundColor Green
+
 # 1. Liberação de portas prévia
-Write-Host "`n[1/3] Liberando portas 8000 e 3000..." -ForegroundColor Yellow
+Write-Host "[2/4] Liberando portas 8000 e 3000..." -ForegroundColor Yellow
 $ports = @(8000, 3000)
 foreach ($p in $ports) {
     $conns = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue
@@ -22,7 +40,7 @@ foreach ($p in $ports) {
 }
 
 # 2. Inicializa o Backend FastAPI
-Write-Host "[2/3] Inicializando Backend FastAPI (Porta 8000)..." -ForegroundColor Yellow
+Write-Host "[3/4] Inicializando Backend FastAPI (Porta 8000)..." -ForegroundColor Yellow
 $backendCmd = @"
 Set-Location '$rootDir\backend'
 Write-Host 'Conectando ao Supabase e iniciando FastAPI...' -ForegroundColor Green
